@@ -1,9 +1,4 @@
 import { View, Text, StyleSheet, Pressable } from "react-native";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-} from "react-native-reanimated";
 import { useColorScheme } from "@/components/useColorScheme";
 
 interface YesNoProps {
@@ -12,31 +7,9 @@ interface YesNoProps {
   onSelect: (value: "yes" | "no") => void;
 }
 
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
-
 export function YesNo({ question, value, onSelect }: YesNoProps) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
-
-  const yesScale = useSharedValue(1);
-  const noScale = useSharedValue(1);
-
-  const yesAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: yesScale.value }],
-  }));
-
-  const noAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: noScale.value }],
-  }));
-
-  const handlePress = (selected: "yes" | "no") => {
-    const scale = selected === "yes" ? yesScale : noScale;
-    scale.value = withSpring(0.9, { damping: 10 });
-    setTimeout(() => {
-      scale.value = withSpring(1, { damping: 10 });
-    }, 100);
-    onSelect(selected);
-  };
 
   return (
     <View style={styles.container}>
@@ -44,15 +17,15 @@ export function YesNo({ question, value, onSelect }: YesNoProps) {
         {question}
       </Text>
       <View style={styles.buttonContainer}>
-        <AnimatedPressable
-          style={[
+        <Pressable
+          style={({ pressed }) => [
             styles.button,
             {
               backgroundColor: value === "yes" ? "#34C759" : isDark ? "#2C2C2E" : "#E5E5EA",
+              transform: [{ scale: pressed ? 0.95 : 1 }],
             },
-            yesAnimatedStyle,
           ]}
-          onPress={() => handlePress("yes")}
+          onPress={() => onSelect("yes")}
         >
           <Text
             style={[
@@ -62,16 +35,16 @@ export function YesNo({ question, value, onSelect }: YesNoProps) {
           >
             Yes
           </Text>
-        </AnimatedPressable>
-        <AnimatedPressable
-          style={[
+        </Pressable>
+        <Pressable
+          style={({ pressed }) => [
             styles.button,
             {
               backgroundColor: value === "no" ? "#FF3B30" : isDark ? "#2C2C2E" : "#E5E5EA",
+              transform: [{ scale: pressed ? 0.95 : 1 }],
             },
-            noAnimatedStyle,
           ]}
-          onPress={() => handlePress("no")}
+          onPress={() => onSelect("no")}
         >
           <Text
             style={[
@@ -81,7 +54,7 @@ export function YesNo({ question, value, onSelect }: YesNoProps) {
           >
             No
           </Text>
-        </AnimatedPressable>
+        </Pressable>
       </View>
     </View>
   );

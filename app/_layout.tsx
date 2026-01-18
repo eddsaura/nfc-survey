@@ -2,7 +2,6 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
-import 'react-native-reanimated';
 
 import { useColorScheme } from '@/components/useColorScheme';
 import { ConvexClientProvider } from '@/src/lib/convex';
@@ -41,6 +40,7 @@ function RootLayoutNav() {
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
           <Stack.Screen name="survey/[surveyId]/[response]" options={{ headerShown: false }} />
           <Stack.Screen name="follow-up/[surveyId]" options={{ title: 'Follow-up Questions' }} />
         </Stack>

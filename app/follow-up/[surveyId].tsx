@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   View,
   Text,
@@ -9,7 +9,6 @@ import {
 } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { useMutation, useQuery } from "convex/react";
-import Animated, { FadeInRight, FadeOutLeft, FadeInUp } from "react-native-reanimated";
 
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
@@ -147,7 +146,7 @@ export default function FollowUpScreen() {
           { backgroundColor: isDark ? "#000000" : "#F2F2F7" },
         ]}
       >
-        <Animated.View entering={FadeInUp} style={styles.completedContent}>
+        <View style={styles.completedContent}>
           <View style={styles.iconContainer}>
             <Text style={styles.icon}>✓</Text>
           </View>
@@ -157,7 +156,7 @@ export default function FollowUpScreen() {
           <Text style={[styles.completedMessage, { color: isDark ? "#8E8E93" : "#6E6E73" }]}>
             Your feedback has been recorded.
           </Text>
-        </Animated.View>
+        </View>
       </View>
     );
   }
@@ -201,10 +200,8 @@ export default function FollowUpScreen() {
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
         >
-          <Animated.View
+          <View
             key={currentQuestion.id}
-            entering={FadeInRight}
-            exiting={FadeOutLeft}
             style={styles.questionContainer}
           >
             {currentQuestion.type === "yes_no" && (
@@ -242,7 +239,7 @@ export default function FollowUpScreen() {
                 multiline
               />
             )}
-          </Animated.View>
+          </View>
         </ScrollView>
 
         <View style={styles.footer}>

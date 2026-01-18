@@ -8,8 +8,11 @@
  * @module
  */
 
+import type * as auth from "../auth.js";
 import type * as followUp from "../followUp.js";
+import type * as http from "../http.js";
 import type * as surveys from "../surveys.js";
+import type * as users from "../users.js";
 import type * as votes from "../votes.js";
 
 import type {
@@ -19,8 +22,11 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  auth: typeof auth;
   followUp: typeof followUp;
+  http: typeof http;
   surveys: typeof surveys;
+  users: typeof users;
   votes: typeof votes;
 }>;
 

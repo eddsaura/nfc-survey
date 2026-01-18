@@ -4,15 +4,7 @@ import {
   Text,
   ActivityIndicator,
   ViewStyle,
-  TextStyle,
 } from "react-native";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-} from "react-native-reanimated";
-
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 interface ButtonProps {
   title: string;
@@ -46,38 +38,22 @@ export function Button({
   loading = false,
   style,
 }: ButtonProps) {
-  const scale = useSharedValue(1);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-  }));
-
   const colors = variantColors[variant];
   const sizes = sizeStyles[size];
 
-  const handlePressIn = () => {
-    scale.value = withSpring(0.95, { damping: 10, stiffness: 400 });
-  };
-
-  const handlePressOut = () => {
-    scale.value = withSpring(1, { damping: 10, stiffness: 400 });
-  };
-
   return (
-    <AnimatedPressable
+    <Pressable
       onPress={onPress}
-      onPressIn={handlePressIn}
-      onPressOut={handlePressOut}
       disabled={disabled || loading}
-      style={[
+      style={({ pressed }) => [
         styles.button,
         {
           backgroundColor: colors.bg,
           paddingVertical: sizes.paddingVertical,
           paddingHorizontal: sizes.paddingHorizontal,
-          opacity: disabled || loading ? 0.5 : 1,
+          opacity: disabled || loading ? 0.5 : pressed ? 0.8 : 1,
+          transform: [{ scale: pressed ? 0.97 : 1 }],
         },
-        animatedStyle,
         style,
       ]}
     >
@@ -88,7 +64,7 @@ export function Button({
           {title}
         </Text>
       )}
-    </AnimatedPressable>
+    </Pressable>
   );
 }
 

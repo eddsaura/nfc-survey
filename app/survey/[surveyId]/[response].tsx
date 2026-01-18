@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { View, Text, StyleSheet, ActivityIndicator, Platform } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { useMutation, useQuery } from "convex/react";
-import Animated, { FadeIn, FadeInUp } from "react-native-reanimated";
 
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
@@ -130,14 +129,14 @@ export default function VoteScreen() {
       ]}
     >
       {status === "loading" || status === "voting" ? (
-        <Animated.View entering={FadeIn} style={styles.content}>
+        <View style={styles.content}>
           <ActivityIndicator size="large" color="#007AFF" />
           <Text style={[styles.statusText, { color: isDark ? "#FFFFFF" : "#000000" }]}>
             {status === "loading" ? "Loading survey..." : "Registering your vote..."}
           </Text>
-        </Animated.View>
+        </View>
       ) : status === "success" ? (
-        <Animated.View entering={FadeInUp} style={styles.content}>
+        <View style={styles.content}>
           <View style={styles.iconContainer}>
             <Text style={styles.icon}>✓</Text>
           </View>
@@ -166,9 +165,9 @@ export default function VoteScreen() {
             </View>
           </View>
           {!isWeb && <Button title="Done" onPress={handleGoHome} style={styles.button} />}
-        </Animated.View>
+        </View>
       ) : status === "already_voted" ? (
-        <Animated.View entering={FadeInUp} style={styles.content}>
+        <View style={styles.content}>
           <View style={[styles.iconContainer, { backgroundColor: "#FF9500" }]}>
             <Text style={styles.icon}>!</Text>
           </View>
@@ -179,9 +178,9 @@ export default function VoteScreen() {
             You have already submitted your vote for this survey.
           </Text>
           {!isWeb && <Button title="Go Home" onPress={handleGoHome} style={styles.button} />}
-        </Animated.View>
+        </View>
       ) : (
-        <Animated.View entering={FadeInUp} style={styles.content}>
+        <View style={styles.content}>
           <View style={[styles.iconContainer, { backgroundColor: "#FF3B30" }]}>
             <Text style={styles.icon}>✕</Text>
           </View>
@@ -192,7 +191,7 @@ export default function VoteScreen() {
             {errorMessage}
           </Text>
           {!isWeb && <Button title="Go Home" onPress={handleGoHome} style={styles.button} />}
-        </Animated.View>
+        </View>
       )}
     </View>
   );

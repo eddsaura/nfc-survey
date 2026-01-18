@@ -1,7 +1,10 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
+import { authTables } from "@convex-dev/auth/server";
 
 export default defineSchema({
+  ...authTables,
+
   surveys: defineTable({
     title: v.string(),
     question: v.string(),
@@ -22,7 +25,8 @@ export default defineSchema({
     ),
     isActive: v.boolean(),
     createdAt: v.number(),
-  }),
+    userId: v.id("users"),
+  }).index("by_user", ["userId"]),
 
   votes: defineTable({
     surveyId: v.id("surveys"),

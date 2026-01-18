@@ -4,7 +4,7 @@ import NfcManager, { Ndef, NfcEvents, NfcTech } from "react-native-nfc-manager";
 const WEB_DOMAIN = process.env.EXPO_PUBLIC_WEB_DOMAIN || "localhost:8081";
 
 export function generateSurveyUrl(surveyId: string, response: "yes" | "no"): string {
-  return `https://${WEB_DOMAIN}/survey/${surveyId}/${response}`;
+  return `${WEB_DOMAIN}/survey/${surveyId}/${response}`;
 }
 
 export interface NfcStatus {

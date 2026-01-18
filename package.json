@@ -2,6 +2,7 @@
   "name": "nfc-surveys",
   "main": "expo-router/entry",
   "version": "1.0.0",
+  "author": "Saura",
   "scripts": {
     "start": "expo start",
     "android": "expo run:android",

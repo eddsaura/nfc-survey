@@ -9,7 +9,6 @@ import {
 } from "react-native";
 import { router } from "expo-router";
 import { useQuery } from "convex/react";
-import Animated, { FadeInUp } from "react-native-reanimated";
 
 import { api } from "@/convex/_generated/api";
 import { useNfc } from "@/src/hooks/useNfc";
@@ -68,7 +67,7 @@ export default function HomeScreen() {
       ]}
       contentContainerStyle={styles.content}
     >
-      <Animated.View entering={FadeInUp.delay(100)}>
+      <View>
         <Card style={styles.heroCard}>
           <Text style={[styles.heroTitle, { color: isDark ? "#FFFFFF" : "#000000" }]}>
             NFC Surveys
@@ -131,9 +130,9 @@ export default function HomeScreen() {
             )}
           </View>
         </Card>
-      </Animated.View>
+      </View>
 
-      <Animated.View entering={FadeInUp.delay(200)}>
+      <View>
         <View style={styles.section}>
           <Text
             style={[styles.sectionTitle, { color: isDark ? "#FFFFFF" : "#000000" }]}
@@ -199,9 +198,9 @@ export default function HomeScreen() {
             </View>
           )}
         </View>
-      </Animated.View>
+      </View>
 
-      <Animated.View entering={FadeInUp.delay(300)}>
+      <View>
         <View style={styles.quickActions}>
           <Text
             style={[styles.sectionTitle, { color: isDark ? "#FFFFFF" : "#000000" }]}
@@ -222,7 +221,7 @@ export default function HomeScreen() {
             />
           </View>
         </View>
-      </Animated.View>
+      </View>
     </ScrollView>
   );
 }

@@ -1,9 +1,4 @@
 import { View, Text, StyleSheet, Pressable } from "react-native";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-} from "react-native-reanimated";
 import { useColorScheme } from "@/components/useColorScheme";
 
 interface RatingScaleProps {
@@ -13,8 +8,6 @@ interface RatingScaleProps {
   value: number | null;
   onRate: (value: number) => void;
 }
-
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export function RatingScale({
   question,
@@ -35,13 +28,30 @@ export function RatingScale({
       </Text>
       <View style={styles.ratingContainer}>
         {ratings.map((rating) => (
-          <RatingButton
+          <Pressable
             key={rating}
-            rating={rating}
-            isSelected={value === rating}
-            onSelect={() => onRate(rating)}
-            isDark={isDark}
-          />
+            style={({ pressed }) => [
+              styles.ratingButton,
+              {
+                backgroundColor: value === rating
+                  ? "#FFD60A"
+                  : isDark
+                    ? "#2C2C2E"
+                    : "#F2F2F7",
+                transform: [{ scale: pressed ? 0.9 : 1 }],
+              },
+            ]}
+            onPress={() => onRate(rating)}
+          >
+            <Text
+              style={[
+                styles.ratingText,
+                { color: value === rating ? "#000000" : isDark ? "#FFFFFF" : "#000000" },
+              ]}
+            >
+              {rating}
+            </Text>
+          </Pressable>
         ))}
       </View>
       <View style={styles.labels}>
@@ -53,58 +63,6 @@ export function RatingScale({
         </Text>
       </View>
     </View>
-  );
-}
-
-function RatingButton({
-  rating,
-  isSelected,
-  onSelect,
-  isDark,
-}: {
-  rating: number;
-  isSelected: boolean;
-  onSelect: () => void;
-  isDark: boolean;
-}) {
-  const scale = useSharedValue(1);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-  }));
-
-  const handlePress = () => {
-    scale.value = withSpring(0.8, { damping: 10 });
-    setTimeout(() => {
-      scale.value = withSpring(1, { damping: 10 });
-    }, 100);
-    onSelect();
-  };
-
-  return (
-    <AnimatedPressable
-      style={[
-        styles.ratingButton,
-        {
-          backgroundColor: isSelected
-            ? "#FFD60A"
-            : isDark
-              ? "#2C2C2E"
-              : "#F2F2F7",
-        },
-        animatedStyle,
-      ]}
-      onPress={handlePress}
-    >
-      <Text
-        style={[
-          styles.ratingText,
-          { color: isSelected ? "#000000" : isDark ? "#FFFFFF" : "#000000" },
-        ]}
-      >
-        {rating}
-      </Text>
-    </AnimatedPressable>
   );
 }
 

@@ -1,10 +1,4 @@
 import { View, Text, StyleSheet, Pressable } from "react-native";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-  FadeIn,
-} from "react-native-reanimated";
 import { useColorScheme } from "@/components/useColorScheme";
 
 interface MultipleChoiceProps {
@@ -13,8 +7,6 @@ interface MultipleChoiceProps {
   value: string | null;
   onSelect: (value: string) => void;
 }
-
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export function MultipleChoice({
   question,
@@ -31,88 +23,46 @@ export function MultipleChoice({
         {question}
       </Text>
       <View style={styles.optionsContainer}>
-        {options.map((option, index) => (
-          <OptionItem
+        {options.map((option) => (
+          <Pressable
             key={option}
-            option={option}
-            isSelected={value === option}
-            onSelect={() => onSelect(option)}
-            isDark={isDark}
-            index={index}
-          />
+            style={({ pressed }) => [
+              styles.option,
+              {
+                backgroundColor: value === option
+                  ? "#007AFF"
+                  : isDark
+                    ? "#2C2C2E"
+                    : "#F2F2F7",
+                borderColor: value === option ? "#007AFF" : "transparent",
+                transform: [{ scale: pressed ? 0.98 : 1 }],
+              },
+            ]}
+            onPress={() => onSelect(option)}
+          >
+            <View
+              style={[
+                styles.radio,
+                {
+                  borderColor: value === option ? "#FFFFFF" : isDark ? "#48484A" : "#C7C7CC",
+                  backgroundColor: value === option ? "#FFFFFF" : "transparent",
+                },
+              ]}
+            >
+              {value === option && <View style={styles.radioInner} />}
+            </View>
+            <Text
+              style={[
+                styles.optionText,
+                { color: value === option ? "#FFFFFF" : isDark ? "#FFFFFF" : "#000000" },
+              ]}
+            >
+              {option}
+            </Text>
+          </Pressable>
         ))}
       </View>
     </View>
-  );
-}
-
-function OptionItem({
-  option,
-  isSelected,
-  onSelect,
-  isDark,
-  index,
-}: {
-  option: string;
-  isSelected: boolean;
-  onSelect: () => void;
-  isDark: boolean;
-  index: number;
-}) {
-  const scale = useSharedValue(1);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-  }));
-
-  const handlePressIn = () => {
-    scale.value = withSpring(0.97, { damping: 10 });
-  };
-
-  const handlePressOut = () => {
-    scale.value = withSpring(1, { damping: 10 });
-  };
-
-  return (
-    <Animated.View entering={FadeIn.delay(index * 50)}>
-      <AnimatedPressable
-        style={[
-          styles.option,
-          {
-            backgroundColor: isSelected
-              ? "#007AFF"
-              : isDark
-                ? "#2C2C2E"
-                : "#F2F2F7",
-            borderColor: isSelected ? "#007AFF" : "transparent",
-          },
-          animatedStyle,
-        ]}
-        onPress={onSelect}
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
-      >
-        <View
-          style={[
-            styles.radio,
-            {
-              borderColor: isSelected ? "#FFFFFF" : isDark ? "#48484A" : "#C7C7CC",
-              backgroundColor: isSelected ? "#FFFFFF" : "transparent",
-            },
-          ]}
-        >
-          {isSelected && <View style={styles.radioInner} />}
-        </View>
-        <Text
-          style={[
-            styles.optionText,
-            { color: isSelected ? "#FFFFFF" : isDark ? "#FFFFFF" : "#000000" },
-          ]}
-        >
-          {option}
-        </Text>
-      </AnimatedPressable>
-    </Animated.View>
   );
 }
 

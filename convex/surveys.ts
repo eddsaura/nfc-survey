@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { getAuthUserId } from "@convex-dev/auth/server";
 
 export const create = mutation({
   args: {
@@ -24,12 +25,18 @@ export const create = mutation({
     ),
   },
   handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new Error("Authentication required");
+    }
+
     const surveyId = await ctx.db.insert("surveys", {
       title: args.title,
       question: args.question,
       followUpQuestions: args.followUpQuestions ?? [],
       isActive: true,
       createdAt: Date.now(),
+      userId,
     });
     return surveyId;
   },
@@ -52,12 +59,35 @@ export const list = query({
   },
 });
 
+export const listMine = query({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      return [];
+    }
+    return await ctx.db
+      .query("surveys")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .order("desc")
+      .collect();
+  },
+});
+
 export const toggleActive = mutation({
   args: { id: v.id("surveys") },
   handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new Error("Authentication required");
+    }
+
     const survey = await ctx.db.get(args.id);
     if (!survey) {
       throw new Error("Survey not found");
+    }
+    if (survey.userId !== userId) {
+      throw new Error("Not authorized to modify this survey");
     }
     await ctx.db.patch(args.id, { isActive: !survey.isActive });
   },
@@ -66,6 +96,18 @@ export const toggleActive = mutation({
 export const remove = mutation({
   args: { id: v.id("surveys") },
   handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new Error("Authentication required");
+    }
+
+    const survey = await ctx.db.get(args.id);
+    if (!survey) {
+      throw new Error("Survey not found");
+    }
+    if (survey.userId !== userId) {
+      throw new Error("Not authorized to delete this survey");
+    }
     await ctx.db.delete(args.id);
   },
 });
