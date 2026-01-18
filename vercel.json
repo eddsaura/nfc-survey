@@ -1,5 +1,5 @@
 {
-  "buildCommand": "pnpm run build:web",
+  "buildCommand": "pnpm exec convex deploy --cmd-url-env-var-name EXPO_PUBLIC_CONVEX_URL --cmd 'pnpm run build:web'",
   "outputDirectory": "dist",
   "rewrites": [
     { "source": "/survey/:surveyId/:response", "destination": "/survey/[surveyId]/[response].html" },
