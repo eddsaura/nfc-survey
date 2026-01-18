@@ -14,7 +14,7 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { useNfc } from "@/src/hooks/useNfc";
+import { useNfc, generateSurveyUrl } from "@/src/hooks/useNfc";
 import { Button, Card } from "@/src/components/ui";
 import { useColorScheme } from "@/components/useColorScheme";
 
@@ -97,7 +97,7 @@ export default function WriteTagScreen() {
   };
 
   const generatedUrl = selectedSurveyId && selectedResponse
-    ? `nfcsurvey://survey/${selectedSurveyId}/${selectedResponse}`
+    ? generateSurveyUrl(selectedSurveyId, selectedResponse)
     : null;
 
   return (

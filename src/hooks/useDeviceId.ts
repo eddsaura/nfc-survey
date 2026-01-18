@@ -1,7 +1,11 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
+import { Platform } from "react-native";
 
 const DEVICE_ID_KEY = "@nfc_surveys_device_id";
+const WEB_DEVICE_ID_KEY = "nfc_surveys_device_id";
+
+const isWeb = Platform.OS === "web";
 
 function generateDeviceId(): string {
   const timestamp = Date.now().toString(36);
@@ -16,11 +20,20 @@ export function useDeviceId() {
   useEffect(() => {
     async function loadOrCreateDeviceId() {
       try {
-        let storedId = await AsyncStorage.getItem(DEVICE_ID_KEY);
+        let storedId: string | null = null;
 
-        if (!storedId) {
-          storedId = generateDeviceId();
-          await AsyncStorage.setItem(DEVICE_ID_KEY, storedId);
+        if (isWeb && typeof window !== "undefined") {
+          storedId = localStorage.getItem(WEB_DEVICE_ID_KEY);
+          if (!storedId) {
+            storedId = generateDeviceId();
+            localStorage.setItem(WEB_DEVICE_ID_KEY, storedId);
+          }
+        } else {
+          storedId = await AsyncStorage.getItem(DEVICE_ID_KEY);
+          if (!storedId) {
+            storedId = generateDeviceId();
+            await AsyncStorage.setItem(DEVICE_ID_KEY, storedId);
+          }
         }
 
         setDeviceId(storedId);
@@ -41,6 +54,15 @@ export function useDeviceId() {
 
 export async function getDeviceId(): Promise<string> {
   try {
+    if (isWeb && typeof window !== "undefined") {
+      let storedId = localStorage.getItem(WEB_DEVICE_ID_KEY);
+      if (!storedId) {
+        storedId = generateDeviceId();
+        localStorage.setItem(WEB_DEVICE_ID_KEY, storedId);
+      }
+      return storedId;
+    }
+
     let storedId = await AsyncStorage.getItem(DEVICE_ID_KEY);
 
     if (!storedId) {

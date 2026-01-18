@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { useMutation, useQuery } from "convex/react";
-import Animated, { FadeInRight, FadeOutLeft } from "react-native-reanimated";
+import Animated, { FadeInRight, FadeOutLeft, FadeInUp } from "react-native-reanimated";
 
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
@@ -26,6 +26,8 @@ import { useColorScheme } from "@/components/useColorScheme";
 
 type AnswerValue = string | number | string[];
 
+const isWeb = Platform.OS === "web";
+
 export default function FollowUpScreen() {
   const { surveyId } = useLocalSearchParams<{ surveyId: string }>();
   const { deviceId } = useDeviceId();
@@ -38,6 +40,7 @@ export default function FollowUpScreen() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, AnswerValue>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(false);
 
   const survey = useQuery(
     api.surveys.get,
@@ -93,13 +96,18 @@ export default function FollowUpScreen() {
       });
 
       clearCurrentVote();
-      router.replace({
-        pathname: "/survey/[surveyId]/[response]",
-        params: {
-          surveyId,
-          response: "complete",
-        },
-      });
+
+      if (isWeb) {
+        setIsCompleted(true);
+      } else {
+        router.replace({
+          pathname: "/survey/[surveyId]/[response]",
+          params: {
+            surveyId,
+            response: "complete",
+          },
+        });
+      }
     } catch (error) {
       console.error("Failed to submit follow-up:", error);
       setIsSubmitting(false);
@@ -108,7 +116,11 @@ export default function FollowUpScreen() {
 
   const handleSkip = () => {
     clearCurrentVote();
-    router.replace("/");
+    if (isWeb) {
+      setIsCompleted(true);
+    } else {
+      router.replace("/");
+    }
   };
 
   if (!survey || questions.length === 0) {
@@ -122,6 +134,30 @@ export default function FollowUpScreen() {
         <Text style={[styles.loadingText, { color: isDark ? "#FFFFFF" : "#000000" }]}>
           Loading...
         </Text>
+      </View>
+    );
+  }
+
+  if (isCompleted) {
+    return (
+      <View
+        style={[
+          styles.container,
+          styles.centeredContainer,
+          { backgroundColor: isDark ? "#000000" : "#F2F2F7" },
+        ]}
+      >
+        <Animated.View entering={FadeInUp} style={styles.completedContent}>
+          <View style={styles.iconContainer}>
+            <Text style={styles.icon}>✓</Text>
+          </View>
+          <Text style={[styles.completedTitle, { color: isDark ? "#FFFFFF" : "#000000" }]}>
+            Thank You!
+          </Text>
+          <Text style={[styles.completedMessage, { color: isDark ? "#8E8E93" : "#6E6E73" }]}>
+            Your feedback has been recorded.
+          </Text>
+        </Animated.View>
       </View>
     );
   }
@@ -232,6 +268,38 @@ export default function FollowUpScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  centeredContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 24,
+  },
+  completedContent: {
+    alignItems: "center",
+    gap: 16,
+  },
+  iconContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: "#34C759",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  icon: {
+    fontSize: 40,
+    color: "#FFFFFF",
+    fontWeight: "bold",
+  },
+  completedTitle: {
+    fontSize: 28,
+    fontWeight: "bold",
+  },
+  completedMessage: {
+    fontSize: 16,
+    textAlign: "center",
+    maxWidth: 280,
   },
   loadingText: {
     fontSize: 16,

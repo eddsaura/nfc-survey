@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
+import { View, Text, StyleSheet, ActivityIndicator, Platform } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { useMutation, useQuery } from "convex/react";
 import Animated, { FadeIn, FadeInUp } from "react-native-reanimated";
@@ -12,6 +12,8 @@ import { Button } from "@/src/components/ui";
 import { useColorScheme } from "@/components/useColorScheme";
 
 type VoteStatus = "loading" | "voting" | "success" | "already_voted" | "error" | "invalid";
+
+const isWeb = Platform.OS === "web";
 
 export default function VoteScreen() {
   const { surveyId, response } = useLocalSearchParams<{
@@ -163,7 +165,7 @@ export default function VoteScreen() {
               </Text>
             </View>
           </View>
-          <Button title="Done" onPress={handleGoHome} style={styles.button} />
+          {!isWeb && <Button title="Done" onPress={handleGoHome} style={styles.button} />}
         </Animated.View>
       ) : status === "already_voted" ? (
         <Animated.View entering={FadeInUp} style={styles.content}>
@@ -176,7 +178,7 @@ export default function VoteScreen() {
           <Text style={[styles.message, { color: isDark ? "#8E8E93" : "#6E6E73" }]}>
             You have already submitted your vote for this survey.
           </Text>
-          <Button title="Go Home" onPress={handleGoHome} style={styles.button} />
+          {!isWeb && <Button title="Go Home" onPress={handleGoHome} style={styles.button} />}
         </Animated.View>
       ) : (
         <Animated.View entering={FadeInUp} style={styles.content}>
@@ -189,7 +191,7 @@ export default function VoteScreen() {
           <Text style={[styles.message, { color: isDark ? "#8E8E93" : "#6E6E73" }]}>
             {errorMessage}
           </Text>
-          <Button title="Go Home" onPress={handleGoHome} style={styles.button} />
+          {!isWeb && <Button title="Go Home" onPress={handleGoHome} style={styles.button} />}
         </Animated.View>
       )}
     </View>

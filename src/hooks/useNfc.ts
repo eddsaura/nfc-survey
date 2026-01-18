@@ -2,6 +2,12 @@ import { useEffect, useState, useCallback } from "react";
 import NfcManager, { NfcTech, Ndef, NfcEvents } from "react-native-nfc-manager";
 import { Platform } from "react-native";
 
+const WEB_DOMAIN = process.env.EXPO_PUBLIC_WEB_DOMAIN || "localhost:8081";
+
+export function generateSurveyUrl(surveyId: string, response: "yes" | "no"): string {
+  return `https://${WEB_DOMAIN}/survey/${surveyId}/${response}`;
+}
+
 export interface NfcStatus {
   isSupported: boolean;
   isEnabled: boolean;
@@ -108,7 +114,7 @@ export function useNfc() {
         throw new Error("NFC is not available");
       }
 
-      const url = `nfcsurvey://survey/${surveyId}/${response}`;
+      const url = generateSurveyUrl(surveyId, response);
 
       try {
         await NfcManager.requestTechnology(NfcTech.Ndef);

@@ -1,0 +1,8 @@
+{
+  "buildCommand": "pnpm run build:web",
+  "outputDirectory": "dist",
+  "rewrites": [
+    { "source": "/survey/:surveyId/:response", "destination": "/survey/[surveyId]/[response].html" },
+    { "source": "/follow-up/:surveyId", "destination": "/follow-up/[surveyId].html" }
+  ]
+}

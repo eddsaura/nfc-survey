@@ -10,10 +10,25 @@ export default function Root({ children }: { children: React.ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no"
+        />
 
-        {/* 
-          Disable body scrolling on web. This makes ScrollView components work closer to how they do on native. 
+        {/* Mobile web app settings */}
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="theme-color" content="#007AFF" media="(prefers-color-scheme: light)" />
+        <meta name="theme-color" content="#0A84FF" media="(prefers-color-scheme: dark)" />
+
+        {/* Open Graph tags for link previews */}
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="NFC Survey" />
+        <meta property="og:description" content="Quick feedback with a simple tap" />
+
+        {/*
+          Disable body scrolling on web. This makes ScrollView components work closer to how they do on native.
           However, body scrolling is often nice to have for mobile web. If you want to enable it, remove this line.
         */}
         <ScrollViewStyleReset />
