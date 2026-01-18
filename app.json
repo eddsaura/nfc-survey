@@ -20,7 +20,10 @@
         "NFCReaderUsageDescription": "This app uses NFC to read survey tags and register your votes."
       },
       "entitlements": {
-        "com.apple.developer.nfc.readersession.formats": ["NDEF", "TAG"]
+        "com.apple.developer.nfc.readersession.formats": [
+          "NDEF",
+          "TAG"
+        ]
       }
     },
     "android": {
@@ -39,10 +42,14 @@
     },
     "plugins": [
       "expo-router",
-      ["react-native-nfc-manager", {
-        "nfcTechRequest": true,
-        "selectIdentifiers": []
-      }]
+      [
+        "react-native-nfc-manager",
+        {
+          "nfcTechRequest": true,
+          "selectIdentifiers": []
+        }
+      ],
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true
