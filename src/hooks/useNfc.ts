@@ -84,19 +84,27 @@ export function useNfc() {
 
       if (tag?.ndefMessage && tag.ndefMessage.length > 0) {
         const ndefRecord = tag.ndefMessage[0];
-        const payload = Ndef.text.decodePayload(
-          new Uint8Array(ndefRecord.payload)
-        );
 
-        if (payload) {
-          return parseSurveyUrl(payload);
-        }
-
+        // Try URI decoding first (since we write URI records)
         const uriPayload = Ndef.uri.decodePayload(
           new Uint8Array(ndefRecord.payload)
         );
         if (uriPayload) {
-          return parseSurveyUrl(uriPayload);
+          const result = parseSurveyUrl(uriPayload);
+          if (result) {
+            return result;
+          }
+        }
+
+        // Fall back to text decoding
+        const textPayload = Ndef.text.decodePayload(
+          new Uint8Array(ndefRecord.payload)
+        );
+        if (textPayload) {
+          const result = parseSurveyUrl(textPayload);
+          if (result) {
+            return result;
+          }
         }
       }
 
