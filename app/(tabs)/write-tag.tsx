@@ -7,6 +7,7 @@ import {
   Pressable,
   Alert,
   Platform,
+  Switch,
 } from "react-native";
 import { useQuery } from "convex/react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
@@ -29,6 +30,7 @@ export default function WriteTagScreen() {
   const [selectedResponse, setSelectedResponse] = useState<ResponseType | null>(null);
   const [isWriting, setIsWriting] = useState(false);
   const [writeSuccess, setWriteSuccess] = useState(false);
+  const [lockTag, setLockTag] = useState(false);
 
   const surveys = useQuery(api.surveys.listMine);
   const activeSurveys = surveys?.filter((s) => s.isActive) ?? [];
@@ -54,13 +56,18 @@ export default function WriteTagScreen() {
     setWriteSuccess(false);
 
     try {
-      const success = await writeTag(selectedSurveyId, selectedResponse);
+      const result = await writeTag(selectedSurveyId, selectedResponse, lockTag);
 
-      if (success) {
+      if (result.success) {
         setWriteSuccess(true);
+        const lockMessage = lockTag
+          ? result.locked
+            ? " The tag has been permanently locked."
+            : " Warning: Tag was written but lock failed."
+          : "";
         Alert.alert(
-          "Tag Written",
-          `Successfully wrote ${selectedResponse.toUpperCase()} vote to the NFC tag.`,
+          result.locked ? "Tag Written & Locked" : "Tag Written",
+          `Successfully wrote ${selectedResponse.toUpperCase()} vote to the NFC tag.${lockMessage}`,
           [
             { text: "Write Another", onPress: () => setWriteSuccess(false) },
             { text: "Done", style: "cancel" },
@@ -279,6 +286,33 @@ export default function WriteTagScreen() {
                     )}
                   </View>
 
+                  <View style={styles.lockSection}>
+                    <View style={styles.lockRow}>
+                      <View style={styles.lockTextContainer}>
+                        <Text style={[styles.lockLabel, { color: isDark ? "#FFFFFF" : "#000000" }]}>
+                          Lock tag after write
+                        </Text>
+                        <Text style={[styles.lockDescription, { color: isDark ? "#8E8E93" : "#6E6E73" }]}>
+                          Permanently prevent tag from being rewritten
+                        </Text>
+                      </View>
+                      <Switch
+                        value={lockTag}
+                        onValueChange={setLockTag}
+                        trackColor={{ false: isDark ? "#39393D" : "#E5E5EA", true: "#FF9500" }}
+                        thumbColor="#FFFFFF"
+                      />
+                    </View>
+                    {lockTag && (
+                      <View style={styles.lockWarning}>
+                        <FontAwesome name="exclamation-triangle" size={14} color="#FF3B30" />
+                        <Text style={styles.lockWarningText}>
+                          Warning: This is permanent and irreversible. The tag can never be rewritten.
+                        </Text>
+                      </View>
+                    )}
+                  </View>
+
                   <Button
                     title={isWriting ? "Hold tag near device..." : "Write to NFC Tag"}
                     onPress={handleWriteTag}
@@ -437,5 +471,40 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 13,
     marginTop: 12,
+  },
+  lockSection: {
+    marginBottom: 16,
+    gap: 8,
+  },
+  lockRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  lockTextContainer: {
+    flex: 1,
+    marginRight: 12,
+  },
+  lockLabel: {
+    fontSize: 15,
+    fontWeight: "500",
+  },
+  lockDescription: {
+    fontSize: 13,
+    marginTop: 2,
+  },
+  lockWarning: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    backgroundColor: "rgba(255, 59, 48, 0.1)",
+    padding: 10,
+    borderRadius: 8,
+    gap: 8,
+  },
+  lockWarningText: {
+    flex: 1,
+    color: "#FF3B30",
+    fontSize: 12,
+    lineHeight: 16,
   },
 });

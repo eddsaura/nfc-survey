@@ -108,7 +108,11 @@ export function useNfc() {
   }, [status, parseSurveyUrl]);
 
   const writeTag = useCallback(
-    async (surveyId: string, response: "yes" | "no"): Promise<boolean> => {
+    async (
+      surveyId: string,
+      response: "yes" | "no",
+      lockAfterWrite: boolean = false
+    ): Promise<{ success: boolean; locked: boolean }> => {
       if (!status.isSupported || !status.isEnabled) {
         throw new Error("NFC is not available");
       }
@@ -122,10 +126,22 @@ export function useNfc() {
 
         if (bytes) {
           await NfcManager.ndefHandler.writeNdefMessage(bytes);
-          return true;
+
+          let locked = false;
+          if (lockAfterWrite) {
+            try {
+              await NfcManager.ndefHandler.makeReadOnly();
+              locked = true;
+            } catch (lockError) {
+              console.warn("Failed to lock tag:", lockError);
+              // Write succeeded but lock failed - still return success
+            }
+          }
+
+          return { success: true, locked };
         }
 
-        return false;
+        return { success: false, locked: false };
       } finally {
         await NfcManager.cancelTechnologyRequest();
       }
