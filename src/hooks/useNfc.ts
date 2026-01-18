@@ -1,6 +1,5 @@
-import { useEffect, useState, useCallback } from "react";
-import NfcManager, { NfcTech, Ndef, NfcEvents } from "react-native-nfc-manager";
-import { Platform } from "react-native";
+import { useCallback, useEffect, useState } from "react";
+import NfcManager, { Ndef, NfcEvents, NfcTech } from "react-native-nfc-manager";
 
 const WEB_DOMAIN = process.env.EXPO_PUBLIC_WEB_DOMAIN || "localhost:8081";
 
