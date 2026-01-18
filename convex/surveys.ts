@@ -111,3 +111,45 @@ export const remove = mutation({
     await ctx.db.delete(args.id);
   },
 });
+
+export const listMineWithResults = query({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      return [];
+    }
+
+    const surveys = await ctx.db
+      .query("surveys")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .order("desc")
+      .collect();
+
+    const surveysWithResults = await Promise.all(
+      surveys.map(async (survey) => {
+        const votes = await ctx.db
+          .query("votes")
+          .withIndex("by_survey", (q) => q.eq("surveyId", survey._id))
+          .collect();
+
+        const yesCount = votes.filter((v) => v.response === "yes").length;
+        const noCount = votes.filter((v) => v.response === "no").length;
+        const total = votes.length;
+
+        return {
+          ...survey,
+          results: {
+            total,
+            yes: yesCount,
+            no: noCount,
+            yesPercentage: total > 0 ? (yesCount / total) * 100 : 0,
+            noPercentage: total > 0 ? (noCount / total) * 100 : 0,
+          },
+        };
+      })
+    );
+
+    return surveysWithResults;
+  },
+});
