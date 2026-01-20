@@ -3,6 +3,10 @@
   "outputDirectory": "dist",
   "rewrites": [
     { "source": "/survey/:surveyId/:response", "destination": "/survey/[surveyId]/[response].html" },
-    { "source": "/follow-up/:surveyId", "destination": "/follow-up/[surveyId].html" }
+    { "source": "/follow-up/:surveyId", "destination": "/follow-up/[surveyId].html" },
+    { "source": "/results", "destination": "/results.html" },
+    { "source": "/create", "destination": "/create.html" },
+    { "source": "/write-tag", "destination": "/write-tag.html" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
