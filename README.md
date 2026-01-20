@@ -2,7 +2,7 @@
 
 ## **What if PostHog surveys were _real_?**
 
-<img src="https://github.com/eddsaura/nfc-survey/blob/main/assets/readme-images/physical-survey.webp" width="500" alt="Physical survey">
+<img src="https://github.com/eddsaura/nfc-survey/blob/main/assets/readme-images/3d-printed-survey.webp" width="500" alt="Physical survey">
 
 Now with the physical survey, you can do your PostHog surveys IRL with our app and this physical survey builder.
 
