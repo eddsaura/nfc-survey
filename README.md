@@ -2,7 +2,7 @@
 
 ## **What if PostHog surveys were _real_?**
 
-
+<img src="https://github.com/eddsaura/nfc-survey/blob/main/assets/readme-images/physical-survey.webp" width="500" alt="Physical survey">
 
 Now with the physical survey, you can do your PostHog surveys IRL with our app and this physical survey builder.
 
@@ -10,7 +10,7 @@ You can create your survey with this React Native app and then write the respons
 
 **Design systems? NAAAAH. 3D printed hogs 👍🏼👍🏼**
 
-
+<img src="https://github.com/eddsaura/nfc-survey/blob/main/assets/readme-images/3d-printed-hoggies.webp" width="500" alt="3d hoggies">
 
 ## How it works
 
@@ -31,6 +31,8 @@ Follow-up questions can be:
 ### 3. Write to NFC tags
 
 Tap your phone to NFC tags to write the response options. Each tag = one answer option (YES or NO).
+
+<img src="https://github.com/eddsaura/nfc-survey/blob/main/assets/readme-images/nfcandbutton-schema.webp" width="500" alt="Write to NFC tags">
 
 ### 4. Place them in your 3D printed survey
 
